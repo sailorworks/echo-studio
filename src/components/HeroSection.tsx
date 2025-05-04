@@ -1,23 +1,23 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface HeroImageSliderProps {
   images: string[];
-  mobileImages?: string[]; // Add mobile images prop
+  mobileImages?: string[];
   interval?: number;
   height?: string;
 }
 
 const HeroImageSlider: React.FC<HeroImageSliderProps> = ({
   images,
-  mobileImages, // Mobile images array
+  mobileImages,
   interval = 5000,
-  height = "100vh",
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const sectionRef = useRef(null);
 
   // Detect if we're on mobile
   useEffect(() => {
@@ -35,6 +35,7 @@ const HeroImageSlider: React.FC<HeroImageSliderProps> = ({
   // Determine which image array to use based on device
   const imageSet = isMobile && mobileImages ? mobileImages : images;
 
+  // Image slideshow
   useEffect(() => {
     if (imageSet.length <= 1) return; // Don't start timer if only one image
     const timer = setInterval(() => {
@@ -48,7 +49,14 @@ const HeroImageSlider: React.FC<HeroImageSliderProps> = ({
   };
 
   return (
-    <div className="relative w-full overflow-hidden" style={{ height }}>
+    <motion.div
+      ref={sectionRef}
+      className="relative w-full h-screen overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8 }}
+    >
       <AnimatePresence initial={false} mode="wait">
         <motion.div
           key={currentImageIndex}
@@ -134,7 +142,7 @@ const HeroImageSlider: React.FC<HeroImageSliderProps> = ({
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 
